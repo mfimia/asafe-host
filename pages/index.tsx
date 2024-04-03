@@ -1,6 +1,4 @@
-import dynamic from 'next/dynamic'
-
-const Dashboard = dynamic(() => import("remote/dashboard"))
+import LoginButton from '@/components/login-btn'
 
 export default function Home() {
   return (
@@ -8,7 +6,7 @@ export default function Home() {
       <h1>
         Main app
       </h1>
-      <Dashboard />
+      <LoginButton />
     </main>
   )
 }
