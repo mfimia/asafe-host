@@ -22,14 +22,25 @@ const Row = ({ index, data }: { index: number; data: ICoin[] }) => {
   );
 };
 
+/**
+ * 
+ * @todo 
+ * **Optimizations**
+ * - Optimize data fetching mechanism for minimal server load
+ * - Warning: data for page "/dashboard" is 793 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance. See more info here: https://nextjs.org/docs/messages/large-page-data
+ * - Optimize the application for mobile performance using Google Lighthouse metrics
+ * - Implement SSR for critical pages to improve initial loading time
+ * - Ensure efficient resource loading using strategies like pre-fetching or pre-loading
+ */
+
 const DashboardPage = ({ data }: { data: ICoin[] }) => {
   const itemCount = useMemo(() => data.length, [data]);
 
   return (
-    <Fragment>
+    <main className='p-4'>
       <h1>Protected Page</h1>
       <Dashboard />
-      <div className="w-full max-w-[600px] border">
+      <div className="w-[90%] max-w-[600px] h-[400px] border mx-auto overflow-hidden">
         <div className='flex justify-between p-[10px] bg-[#f0f0f0] border-b'>
           <strong>ID</strong>
           <strong>Name</strong>
@@ -45,7 +56,7 @@ const DashboardPage = ({ data }: { data: ICoin[] }) => {
           {Row}
         </List>
       </div>
-    </Fragment>
+    </main>
   );
 };
 
