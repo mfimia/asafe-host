@@ -3,7 +3,3 @@
 @tailwind utilities;
 
 @import '../styles/fonts.css';
-
-* {
-  font-family: 'TT Hoves Pro';
-}
