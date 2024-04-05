@@ -63,6 +63,7 @@ npm run dev
 5. Running tests
 
 - Copy the contents of `.env.cypress` into a new `cypress.env.json` file that won't be tracked by version control
+  - To correctly populate `VALID_TEST_COOKIE`, make sure to have logged in first manually, then go into the browser DevTools and grab the value of `next-auth.session-token`
 - To start cypress, run this command:
 
 ```sh
