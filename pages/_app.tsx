@@ -6,7 +6,6 @@ import Navbar from '@/components/Navbar'
 /**
  * 
  * @todo
- * - Write E2E tests with Cypress
  * - Provide comprehensive documentation covering architecture, data models, and instructions for devevelopment and deployment
  */
 

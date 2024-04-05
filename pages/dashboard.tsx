@@ -40,7 +40,7 @@ const DashboardPage = ({ initialData, initialTotalPages }: { initialData: ICoin[
   }, [page])
 
   return (
-    <main className='p-4 m-4'>
+    <main data-test-id="authenticated" className='p-4 m-4'>
       <Dashboard />
       <h3 className='text-xl font-bold text-center my-2 text-ultranebula'>🔥 Hottest coins</h3>
       <div className='mx-auto border border-space80 w-fit p-4 bg-stardust40 rounded-lg sm:min-w-[400px] sm:min-h-[340px]'>
