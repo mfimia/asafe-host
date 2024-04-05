@@ -1,87 +1,81 @@
+import { ICoin } from '@/types';
 import dynamic from 'next/dynamic';
-import { Fragment, useMemo } from 'react';
-import { FixedSizeList as List } from 'react-window';
+import { useEffect, useState } from 'react';
 
 const Dashboard = dynamic(() => import("remote/dashboard"));
-
-interface ICoin {
-  id: string;
-  name: string;
-  symbol: string;
-}
-
-const Row = ({ index, data }: { index: number; data: ICoin[] }) => {
-  const coin = data[index];
-
-  return (
-    <div className='flex justify-between border-b p-2'>
-      <span>{coin.id}</span>
-      <span>{coin.name}</span>
-      <span>{coin.symbol}</span>
-    </div>
-  );
-};
 
 /**
  * 
  * @todo 
  * **Optimizations**
- * - Optimize data fetching mechanism for minimal server load
- * - Warning: data for page "/dashboard" is 793 kB which exceeds the threshold of 128 kB, this amount of data can reduce performance. See more info here: https://nextjs.org/docs/messages/large-page-data
  * - Optimize the application for mobile performance using Google Lighthouse metrics
  * - Implement SSR for critical pages to improve initial loading time
  * - Ensure efficient resource loading using strategies like pre-fetching or pre-loading
  */
 
-const DashboardPage = ({ data }: { data: ICoin[] }) => {
-  const itemCount = useMemo(() => data.length, [data]);
+const DashboardPage = () => {
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [data, setData] = useState<ICoin[]>([])
+
+  useEffect(() => {
+    const fetchCoinData = async () => {
+      try {
+        const res = await fetch(`/api/coins?page=${page}`)
+
+        if (res.status !== 200) {
+          const { error } = await res.json()
+          alert(error)
+        }
+
+        const { data, totalPages }: { data: ICoin[], totalPages: number } = await res.json()
+
+        setData(data)
+        setTotalPages(totalPages)
+      } catch (error) {
+        alert(error)
+      }
+    }
+
+    fetchCoinData()
+  }, [page])
 
   return (
-    <main className='p-4'>
-      <h1>Protected Page</h1>
+    <main className='p-4 m-4'>
       <Dashboard />
-      <div className="w-[90%] max-w-[600px] h-[400px] border mx-auto overflow-hidden">
-        <div className='flex justify-between p-[10px] bg-[#f0f0f0] border-b'>
-          <strong>ID</strong>
-          <strong>Name</strong>
-          <strong>Symbol</strong>
+      <h3 className='text-xl font-bold text-center my-2 text-ultranebula'>🔥 Hottest coins</h3>
+      <div className='mx-auto border border-space80 w-fit p-4 bg-stardust40 rounded-lg sm:min-w-[400px] sm:min-h-[340px]'>
+        <table className='table-auto w-full h-full'>
+          <thead className='text-space100 bg-space60 bg-opacity-60'>
+            <tr>
+              <th className='px-4 py-2'>ID</th>
+              <th className='px-4 py-2'>Name</th>
+              <th className='px-4 py-2'>Symbol</th>
+            </tr>
+          </thead>
+          <tbody className='text-space100 relative'>
+            {data.map(coin => (
+              <tr key={coin.id}>
+                <td className='border px-4 py-2'>{coin.id}</td>
+                <td className='border px-4 py-2'>{coin.name}</td>
+                <td className='border px-4 py-2'>{coin.symbol}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className='flex justify-between mt-4'>
+          <button className='px-4 py-2 bg-ultranebula text-space100 rounded hover:bg-supernebula disabled:opacity-50' onClick={() => setPage(Math.max(page - 1, 1))} disabled={page <= 1}>
+            Previous
+          </button>
+          <span className='text-space100'>Page {page} of {totalPages}</span>
+          <button className='px-4 py-2 bg-ultranebula text-space100 rounded hover:bg-supernebula disabled:opacity-50' onClick={() => setPage(Math.min(page + 1, totalPages))} disabled={page >= totalPages}>
+            Next
+          </button>
         </div>
-        <List
-          height={600}
-          width="100%"
-          itemSize={35}
-          itemCount={itemCount}
-          itemData={data}
-        >
-          {Row}
-        </List>
       </div>
     </main>
   );
 };
-
-export async function getServerSideProps() {
-  const url = 'https://api.coingecko.com/api/v3/coins/list';
-  const options = { method: 'GET', headers: { 'x-cg-demo-api-key': process.env.COINGECKO_API_KEY || '' } };
-
-  try {
-    const res = await fetch(url, options);
-    if (!res.ok) throw new Error(`Failed to fetch, status: ${res.status}`);
-    const data: ICoin[] = await res.json();
-
-    return {
-      props: {
-        data
-      }
-    };
-  } catch (err) {
-    console.error('Error fetching data:', err);
-    return {
-      props: {
-        data: []
-      }
-    };
-  }
-}
 
 export default DashboardPage
