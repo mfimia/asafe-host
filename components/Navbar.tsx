@@ -5,8 +5,7 @@ import logo from '../public/img/logo_svg_path.svg'
 import { useSession, signOut, signIn } from "next-auth/react"
 
 const navLinks = [
-  { href: '/dashboard', text: 'Dashboard' },
-  { href: '/tools', text: 'Tools' },
+  { href: '/dashboard', text: 'Dashboard' }
 ]
 
 const Navbar: React.FC = () => {
