@@ -8,7 +8,7 @@ const COINS_KEY = 'COINS'
 const cache = new Map();
 const FIVE_MINUTES = 1000 * 60 * 5
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const timestamp = Date.now()
   const session = await getServerSession(req, res, authOptions)
 
@@ -45,3 +45,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).send({ error: error.message })
   }
 }
+
+export default handler

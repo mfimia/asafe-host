@@ -5,13 +5,6 @@ import { useEffect, useState } from 'react';
 
 const Dashboard = dynamic(() => import("remote/dashboard"));
 
-/**
- * 
- * @todo 
- * **Optimizations**
- * - Optimize the application for mobile performance using Google Lighthouse metrics
- */
-
 const DashboardPage = ({ initialData, initialTotalPages }: { initialData: ICoin[], initialTotalPages: number }) => {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(initialTotalPages)

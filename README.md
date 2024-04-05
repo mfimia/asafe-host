@@ -1,34 +1,82 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Asafe MFE - host
 
-## Getting Started
+This is a host MFE created with `NextJS` that is capable of consuming remote MFE components. It is a web application to display crypto data to authenticated users
 
-First, run the development server:
+## Project structure
 
-```bash
-npm run dev
-# or
-yarn dev
+- Built using NextJS v13 pages router (unfortunately there is no support for module federation on app router yet and v14 support is still flaky)
+- Uses `TypeScript` and `TailwindCSS`
+- Components
+  - `LoginInfoHeader` - Displays session info for a logged user
+  - `Navbar` - Allows navigation between pages
+- Pages
+  - `index` - Homepage. Displays info about the site
+  - `dashboard`
+    - Only for authorized users. Protected using `NextAuth`
+    - Dynamically imports `Dashboard` component, which is a federated module from [asafe-remote](https://github.com/mfimia/asafe-remote)
+    - Contains a list of tokens fetched from CoinGecko api
+    - Leverages SSR to enhance SEO by rendering the first coins of the list statically on build time using NextJS's [getStaticProps](https://nextjs.org/docs/pages/building-your-application/data-fetching/get-static-props). Props revalidated once per day
+- API routes
+  - `auth` - Special route to enable `NextAuth` functionality. Currently Google and GitHub configured as OAuth providers
+  - `coins` - BFF layer to fetch data from CoinGecko api. It retrieves a large amount of coin data
+    - Enabled cache logic. Invalidation every 5 mins
+- E2E tests
+  - Using cypress as testing framework
+  - Testing authorization flow on navigation component
+
+## Amazing, right? Here is how to use it:
+
+### For development:
+
+1. Ensure you have node and npm installed on your machine:
+
+- [Node.js](https://nodejs.org/)
+- npm
+
+2. Clone the repository and install dependencies:
+
+```sh
+git clone https://github.com/mfimia/asafe-host.git
+cd asafe-host
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Set up environment variables
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- Copy all contents of `.env.example` file and paste them into a new `.env` file that won't be tracked by version control
+- Make sure to populate all the credentials for OAuth providers, CoinGecko api, and generate a new `NEXTAUTH_SECRET` of your own. Below are some guides to help you out:
+  - [Set up Google OAuth credentials](https://next-auth.js.org/providers/google)
+  - [Set up GitHub OAuth credentials](https://next-auth.js.org/providers/github)
+  - [CoinGecko api docs](https://docs.coingecko.com/v3.0.1/reference/setting-up-your-api-key)
+  - Use `openssl rand -base64 32` on your terminal to generate a good `NEXTAUTH_SECRET`
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+4. Spin up dev server
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```sh
+# To run the application in development mode:
+npm run dev
+# This will spin up the application on http://localhost:3000
+```
 
-## Learn More
+> :warning: Please make sure you are also running another terminal with [asafe-remote](https://github.com/mfimia/asafe-remote) on dev mode. It will consume port 3001. This will provide the code to generate the Dashboard in your dashboard page. Follow the instructions on the project's README to get started
 
-To learn more about Next.js, take a look at the following resources:
+5. Running tests
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Copy the contents of `.env.cypress` into a new `cypress.env.json` file that won't be tracked by version control
+- To start cypress, run this command:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```sh
+npm run cypress:open
+```
 
-## Deploy on Vercel
+6. Happy coding!
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The easiest way to deploy a Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out the documentation [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details. It should be just a few clicks
+
+> :warning: Please remember to update env variables with your production configuration. You will need the deployed URL of `asafe-remote` in this environment, so please make sure to have that code also deployed
+
+Made with ❤️ by [MF](https://github.com/mfimia)
