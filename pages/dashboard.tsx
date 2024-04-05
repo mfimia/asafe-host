@@ -94,7 +94,7 @@ export async function getStaticProps() {
       initialData: data,
       initialTotalPages: totalPages,
     },
-    revalidate: 1000 * 60 * 60 * 24, // once per day
+    revalidate: 60 * 60 * 24, // once per day
   };
 }
 

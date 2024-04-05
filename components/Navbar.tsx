@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
   const { data: session } = useSession()
 
   return (
-    <nav className='flex w-full items-center justify-between bg-ultranebula p-2 px-8 text-nebula20 font-ubuntu'>
+    <nav className='flex w-full text-xs sm:text-base py-2 items-center justify-between bg-ultranebula sm:p-2 sm:px-8 text-nebula20 font-ubuntu'>
       <Link href='/'>
         <Image src={logo} alt='Bibot_logo' width={100} />
       </Link>
