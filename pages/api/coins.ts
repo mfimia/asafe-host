@@ -2,23 +2,11 @@ import { getServerSession } from "next-auth/next"
 import { NextApiRequest, NextApiResponse } from "next"
 import { authOptions } from "./auth/[...nextauth]"
 import { ICoin } from "@/types";
+import { ROWS_LIMIT, fetchData, getPageData } from "@/utils";
 
 const COINS_KEY = 'COINS'
-const ROWS_LIMIT = 5;
 const cache = new Map();
 const FIVE_MINUTES = 1000 * 60 * 5
-
-const fetchData = async (url: string, options: RequestInit) => {
-  const response = await fetch(url, options);
-  if (!response.ok) throw new Error(`Failed to fetch, status: ${response.status}`);
-  return response.json();
-};
-
-const getPageData = (allData: ICoin[], page: number) => {
-  const startIndex = (page - 1) * ROWS_LIMIT;
-  const endIndex = page * ROWS_LIMIT;
-  return allData.slice(startIndex, endIndex);
-};
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const timestamp = Date.now()

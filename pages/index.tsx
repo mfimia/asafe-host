@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <Fragment>
       <LoginInfoHeader />
-      <main className='container mx-auto mt-20 p-12 flex flex-col items-center justify-center text-twilight100 rounded-lg shadow-lg font-tt'>
+      <main className='container mx-auto mt-20 p-12 flex flex-col items-center justify-center text-twilight100 rounded-lg font-tt'>
         <h1 className='text-3xl text-center font-bold mb-4'>
           Welcome to <span className='text-ultranebula'>Bibot Crypto Dashboard</span>
         </h1>

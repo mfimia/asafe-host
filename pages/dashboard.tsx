@@ -1,4 +1,5 @@
 import { ICoin } from '@/types';
+import { ROWS_LIMIT, fetchData, getPageData } from '@/utils';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
@@ -9,14 +10,12 @@ const Dashboard = dynamic(() => import("remote/dashboard"));
  * @todo 
  * **Optimizations**
  * - Optimize the application for mobile performance using Google Lighthouse metrics
- * - Implement SSR for critical pages to improve initial loading time
- * - Ensure efficient resource loading using strategies like pre-fetching or pre-loading
  */
 
-const DashboardPage = () => {
+const DashboardPage = ({ initialData, initialTotalPages }: { initialData: ICoin[], initialTotalPages: number }) => {
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [data, setData] = useState<ICoin[]>([])
+  const [totalPages, setTotalPages] = useState(initialTotalPages)
+  const [data, setData] = useState<ICoin[]>(initialData)
 
   useEffect(() => {
     const fetchCoinData = async () => {
@@ -77,5 +76,26 @@ const DashboardPage = () => {
     </main>
   );
 };
+
+export async function getStaticProps() {
+  const url = 'https://api.coingecko.com/api/v3/coins/list';
+  const options = { method: 'GET', headers: { 'x-cg-demo-api-key': process.env.COINGECKO_API_KEY || '' } };
+
+  const response = await fetch(url, options);
+
+  if (!response.ok) throw new Error(`Failed to fetch, status: ${response.status}`);
+
+  const allData: ICoin[] = await fetchData(url, options);
+  const data = getPageData(allData, 1);
+  const totalPages = Math.ceil(allData.length / ROWS_LIMIT);
+
+  return {
+    props: {
+      initialData: data,
+      initialTotalPages: totalPages,
+    },
+    revalidate: 1000 * 60 * 60 * 24, // once per day
+  };
+}
 
 export default DashboardPage
