@@ -2,6 +2,10 @@
 
 This is a host MFE created with `NextJS` that is capable of consuming remote MFE components. It is a web application to display crypto data to authenticated users
 
+## Diagram
+
+![MFE structure](./MFE_diagram.png)
+
 ## Project structure
 
 - Built using NextJS v13 pages router (unfortunately there is no support for module federation on app router yet and v14 support is still flaky)
