@@ -30,10 +30,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const url = 'https://api.coingecko.com/api/v3/coins/list';
     const options = { method: 'GET', headers: { 'x-cg-demo-api-key': process.env.COINGECKO_API_KEY || '' } };
 
-    const response = await fetch(url, options);
-
-    if (!response.ok) throw new Error(`Failed to fetch, status: ${response.status}`);
-
     const allData: ICoin[] = await fetchData(url, options);
     const data = getPageData(allData, page);
     const totalPages = Math.ceil(allData.length / ROWS_LIMIT);
